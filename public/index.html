@@ -12,29 +12,32 @@
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
 		app.onInit = function () {
-			
+			var paddleWidth = app.width /40
+			var paddleHeight = app.height/4
 			this.nodes.push({
 				id: 'player-one',
-				x: 100,
-				y: 0,
-				width: app.canvas.width / 4,
-				height: app.canvas.height / 20,
+				x: 0,
+				y: (app.height - paddleHeight)/2,
+				width: paddleWidth,
+				height: paddleHeight,
+				speed: 3,
 				color: 'black'
 
 			});
 
 			this.nodes.push({
 				id: 'player-two',
-				x: 100,
-				y: app.height-20,
-				width: app.canvas.width / 4,
-				height: 20,
+				x: app.width - paddleWidth,
+				y: (app.height - paddleHeight)/2,
+				width: paddleWidth,
+				height: paddleHeight,
+				speed: 3,
 				color: 'black'
 			});
 			this.nodes.push({
 				id: 'ball',
-				x: 0,
-				y: 0,
+				x: app.width/2,
+				y: app.height/2,
 				width: 10,
 				height: 10,
 				radius: 3,
@@ -44,20 +47,18 @@
 			 * @param{KeyboardEvent} event
 			 **/
 			window.onkeydown = function (event) {
-
-
 				switch (event.code) {
 					case 'KeyW':
-						app.getNode('player-one').y--;
+						app.getNode('player-one').y-=app.getNode('player-one').speed;
 						break;
 					case 'KeyS':
-						app.getNode('player-one').y++;
+						app.getNode('player-one').y+=app.getNode('player-one').speed;
 						break;
 					case 'ArrowUp':
-						app.getNode('player-two').y--;
+						app.getNode('player-two').y-=app.getNode('player-two').speed;
 						break;
 					case 'ArrowDown':
-						app.getNode('player-two').y++;
+						app.getNode('player-two').y+=app.getNode('player-two').speed;
 						break;
 					case 'Space':
 						break;
