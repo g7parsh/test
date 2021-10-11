@@ -12,20 +12,21 @@
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
 		app.onInit = function () {
+			
 			this.nodes.push({
 				id: 'player-one',
 				x: 100,
 				y: 0,
 				width: app.canvas.width / 4,
 				height: app.canvas.height / 20,
-				color: 'black',
-				direction: 0
+				color: 'black'
+
 			});
 
 			this.nodes.push({
 				id: 'player-two',
 				x: 100,
-				y: app.canvas.height - 20,
+				y: app.height-20,
 				width: app.canvas.width / 4,
 				height: 20,
 				color: 'black'
@@ -39,18 +40,45 @@
 				radius: 3,
 				color: 'red'
 			});
-		};
+			/**
+			 * @param{KeyboardEvent} event
+			 **/
+			window.onkeydown = function (event) {
 
-		app.onUpdate = function (time) {
-			this.getNode('player-one').y++;
 
-			if (Math.cos(this.timestamp / 100) > 0) {
-				this.getNode('player-two').direction = -1;
-			} else {
-				this.getNode('player-two').direction = 1;
+				switch (event.code) {
+					case 'KeyW':
+						app.getNode('player-one').y--;
+						break;
+					case 'KeyS':
+						app.getNode('player-one').y++;
+						break;
+					case 'ArrowUp':
+						app.getNode('player-two').y--;
+						break;
+					case 'ArrowDown':
+						app.getNode('player-two').y++;
+						break;
+					case 'Space':
+						break;
+					default:
+						console.log(event);
+						break;
+				}
 			}
+		};
+		app.onUpdate = function (time) {
 
-			this.getNode('player-two').x += this.getNode('player-two').direction;
+
+			//this.getNode('player-two').y++;
+
+			// if (Math.cos(this.timestamp / 100) > 0) {
+			// 	this.getNode('player-one').direction = -1;
+			// } else {
+			// 	this.getNode('player-one').direction = 1;
+			// }
+
+			// this.getNode('player-one').x += this.getNode('player-one').direction;
 		};
 	</script>
 </body>
