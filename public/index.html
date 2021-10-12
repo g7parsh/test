@@ -84,32 +84,45 @@
 			}
 		};
 
-		app.collisionCheck = function (player, ball) {
-
+		app.collisionCheck = function (ball) {
+			var player1 = this.getNode('player-one');
+			var player2 = this.getNode('player-two');
+			//Player 1 collision
+			if (ball.x < player1.x + player1.width &&
+				ball.y <= player1.y + (player1.height / 2)) {
+				ball.yDir *= -1;
+				ball.xDir *= -1;
+			}
+			else if (ball.x < player1.x + player1.width &&
+				ball.y > player1.y + (player1.height / 2)) {
+				ball.xDir *= -1;
+			}
+			//Player 2 collision
+			else if (ball.x + ball.width > player2.x &&
+				ball.y <= player2.y + (player2.height / 2)) {
+				ball.xDir *= -1;
+			}
+			else if (ball.x + ball.width > player2.x &&
+				ball.y > player2.y + (player2.height / 2)) {
+				ball.yDir *= -1;
+				ball.xDir *= -1;
+			}
 		}
 		app.reset = function () { };
 		app.pause = function () { };
 		app.onUpdate = function (time) {
-			this.getNode('ball').y += Math.sin((Math.PI * (1 / 4)) * this.getNode('ball').speed) * this.getNode('ball').yDir;
-			this.getNode('ball').x += Math.cos((Math.PI * (3 / 4)) * this.getNode('ball').speed) * this.getNode('ball').xDir;
-			if (this.getNode('ball').y < 0 || this.getNode('ball').y + this.getNode('ball').height > app.height) {
-				this.getNode('ball').yDir *= -1;
+			var ball = this.getNode('ball');
+			ball.y += Math.sin((Math.PI * (1 / 4)) * ball.speed) * ball.yDir;
+			ball.x += Math.cos((Math.PI * (1 / 4)) * ball.speed) * ball.xDir;
+			if (ball.y < 0 || ball.y + ball.height > app.height) {
+				ball.yDir *= -1;
 			}
 
-			if (this.getNode('ball').x < 0 || this.getNode('ball').x + this.getNode('ball').width > app.width) {
-				this.getNode('ball').xDir *= -1;
+			if (ball.x < 0 || ball.x + ball.width > app.width) {
+				ball.xDir *= -1;
 			}
+			this.collisionCheck(ball)
 
-
-			//this.getNode('player-two').y++;
-
-			// if (Math.cos(this.timestamp / 100) > 0) {
-			// 	this.getNode('player-one').xDir = -1;
-			// } else {
-			// 	this.getNode('player-one').xDir = 1;
-			// }
-
-			// this.getNode('player-one').x += this.getNode('player-one').xDir;
 		};
 	</script>
 </body>
