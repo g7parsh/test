@@ -40,8 +40,13 @@
 				y: app.height / 2,
 				width: 10,
 				height: 10,
+				speed: 5,
 				radius: 3,
-				color: 'red'
+				xDir: 1,
+				yDir: 1,
+				color: 'red',
+
+
 			});
 			/**
 			 * @param{KeyboardEvent} event
@@ -49,6 +54,7 @@
 			window.onkeydown = function (event) {
 				switch (event.code) {
 					case 'KeyW':
+
 						app.getNode('player-one').y -= app.getNode('player-one').speed;
 
 						if (app.getNode('player-one').y < 0) { app.getNode('player-one').y = 0 };
@@ -77,18 +83,33 @@
 				}
 			}
 		};
+
+		app.collisionCheck = function (player, ball) {
+
+		}
+		app.reset = function () { };
+		app.pause = function () { };
 		app.onUpdate = function (time) {
+			this.getNode('ball').y += Math.sin((Math.PI * (1 / 4)) * this.getNode('ball').speed) * this.getNode('ball').yDir;
+			this.getNode('ball').x += Math.cos((Math.PI * (3 / 4)) * this.getNode('ball').speed) * this.getNode('ball').xDir;
+			if (this.getNode('ball').y < 0 || this.getNode('ball').y + this.getNode('ball').height > app.height) {
+				this.getNode('ball').yDir *= -1;
+			}
+
+			if (this.getNode('ball').x < 0 || this.getNode('ball').x + this.getNode('ball').width > app.width) {
+				this.getNode('ball').xDir *= -1;
+			}
 
 
 			//this.getNode('player-two').y++;
 
 			// if (Math.cos(this.timestamp / 100) > 0) {
-			// 	this.getNode('player-one').direction = -1;
+			// 	this.getNode('player-one').xDir = -1;
 			// } else {
-			// 	this.getNode('player-one').direction = 1;
+			// 	this.getNode('player-one').xDir = 1;
 			// }
 
-			// this.getNode('player-one').x += this.getNode('player-one').direction;
+			// this.getNode('player-one').x += this.getNode('player-one').xDir;
 		};
 	</script>
 </body>
