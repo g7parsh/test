@@ -21,7 +21,8 @@
 				width: paddleWidth,
 				height: paddleHeight,
 				speed: 3,
-				color: 'black'
+				color: 'black',
+				score: 0
 
 			});
 
@@ -32,7 +33,8 @@
 				width: paddleWidth,
 				height: paddleHeight,
 				speed: 3,
-				color: 'black'
+				color: 'black',
+				score: 0
 			});
 			this.nodes.push({
 				id: 'ball',
@@ -91,10 +93,14 @@
 				ball.yDir *= -1;
 			}
 
-			if (ball.x < 0 || ball.x + ball.width > app.width) {
-				//console.log('Wall hit', this.getNode('ball').x, this.getNode('ball').y);
-
-				ball.xDir *= -1;
+			if (ball.x < 0) {
+				this.getNode('player-two').score++;
+				this.printScore();
+				this.resetBall();
+			} else if (ball.x + ball.width > app.width) {
+				this.getNode('player-one').score++;
+				this.printScore();
+				this.resetBall();
 			}
 		}
 		app.collisionCheck = function (ball) {
@@ -123,14 +129,31 @@
 					ball.xDir *= -1;
 					//console.log('2 top', player2, ball);
 				}
-				else if (ball.y > player1.y + (.5 * player2.height) && ball.y <= player2.y + player2.height) {
+				else if (ball.y > player2.y + (.5 * player2.height) && ball.y <= player2.y + player2.height) {
 					ball.yDir = -1;
 					ball.xDir *= -1;
 					//console.log('2 bottom', player2, ball);
 				}
 			}
 		}
-		app.reset = function () { };
+		app.printScore = function () {
+			var player1 = this.getNode('player-one');
+			var player2 = this.getNode('player-two');
+
+			console.log(`SCORE: Player 1:${player1.score} - Player 2:${player2.score}`);
+		}
+		app.resetBall = function () {
+			this.getNode('ball').x = app.width / 2;
+			this.getNode('ball').y = app.height / 2;
+			this.getNode('ball').xDir*=-1;
+		};
+		app.reset = function () {
+			this.getNode('ball').x = app.width / 2;
+			this.getNode('ball').y = app.height / 2;
+			this.getNode('player-one').score = 0;
+			this.getNode('player-two').score = 0
+
+		};
 		app.pause = function () { };
 		app.onUpdate = function (time) {
 			var ball = this.getNode('ball');
