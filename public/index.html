@@ -12,6 +12,10 @@
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
 		app.onInit = function () {
+			this.canvas.width = window.outerWidth;
+			this.width = window.innerWidth;
+			this.canvas.height = window.outerHeight;
+			this.height = window.innerHeight;
 			var paddleWidth = app.width / 40
 			var paddleHeight = app.height / 4
 			this.nodes.push({
@@ -40,10 +44,10 @@
 				id: 'ball',
 				x: app.width / 2,
 				y: app.height / 2,
-				width: 10,
-				height: 10,
+				radius: paddleWidth/2,
+				width: paddleWidth,
+				height: paddleWidth,
 				speed: 5,
-				radius: 3,
 				xDir: 1,
 				yDir: 1,
 				color: 'red',
@@ -82,7 +86,6 @@
 						}
 						break;
 					case 'Space':
-
 						app.pause();
 						break;
 					default:
