@@ -54,30 +54,36 @@
 			 * @param{KeyboardEvent} event
 			 **/
 			window.onkeydown = function (event) {
+				var player1 = app.getNode('player-one');
+				var player2 = app.getNode('player-two');
 				switch (event.code) {
 					case 'KeyW':
-
-						app.getNode('player-one').y -= app.getNode('player-one').speed;
-
-						if (app.getNode('player-one').y < 0) { app.getNode('player-one').y = 0 };
+						if (!app.isPaused) {
+							player1.y -= player1.speed;
+							if (player1.y < 0) { player1.y = 0 };
+						}
 						break;
 					case 'KeyS':
-
-						app.getNode('player-one').y += app.getNode('player-one').speed;
-
-						if (app.getNode('player-one').y + paddleHeight > app.height) { app.getNode('player-one').y = app.height - paddleHeight };
+						if (!app.isPaused) {
+							player1.y += player1.speed;
+							if (player1.y + paddleHeight > app.height) { player1.y = app.height - paddleHeight };
+						}
 						break;
 					case 'ArrowUp':
-						app.getNode('player-two').y -= app.getNode('player-two').speed;
-
-						if (app.getNode('player-two').y < 0) { app.getNode('player-two').y = 0 };
+						if (!app.isPaused) {
+							player2.y -= player2.speed;
+							if (player2.y < 0) { player2.y = 0 };
+						}
 						break;
 					case 'ArrowDown':
-						app.getNode('player-two').y += app.getNode('player-two').speed;
-
-						if (app.getNode('player-two').y + paddleHeight > app.height) { app.getNode('player-two').y = app.height - paddleHeight };
+						if (!app.isPaused) {
+							player2.y += player2.speed;
+							if (player2.y + paddleHeight > app.height) { player2.y = app.height - paddleHeight };
+						}
 						break;
 					case 'Space':
+
+						app.pause();
 						break;
 					default:
 						console.log(event);
@@ -145,7 +151,7 @@
 		app.resetBall = function () {
 			this.getNode('ball').x = app.width / 2;
 			this.getNode('ball').y = app.height / 2;
-			this.getNode('ball').xDir*=-1;
+			this.getNode('ball').xDir *= -1;
 		};
 		app.reset = function () {
 			this.getNode('ball').x = app.width / 2;
@@ -154,13 +160,25 @@
 			this.getNode('player-two').score = 0
 
 		};
-		app.pause = function () { };
+		app.isPaused = false;
+		app.pause = function () {
+			//console.log(app.isPaused);
+			if (this.isPaused) {
+				this.isPaused = false;
+			}
+			else {
+				this.isPaused = true;
+			}
+
+		};
 		app.onUpdate = function (time) {
 			var ball = this.getNode('ball');
+			if (!this.isPaused) {
 
-			this.moveBall(ball);
-			this.collisionCheck(ball);
 
+				this.moveBall(ball);
+				this.collisionCheck(ball);
+			}
 		};
 	</script>
 </body>
