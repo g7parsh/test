@@ -83,35 +83,7 @@
 				}
 			}
 		};
-
-		app.collisionCheck = function (ball) {
-			var player1 = this.getNode('player-one');
-			var player2 = this.getNode('player-two');
-			//Player 1 collision
-			if (ball.x < player1.x + player1.width &&
-				ball.y < player1.y + (player1.height / 2)) {
-				ball.yDir *= -1;
-				ball.xDir *= -1;
-			}
-			else if (ball.x < player1.x + player1.width &&
-				ball.y == player1.y + (player1.height / 2)) {
-				ball.xDir *= -1;
-			}
-			//Player 2 collision
-			if (ball.x + ball.width > player2.x &&
-				ball.y < player2.y + (player2.height / 2)) {
-				ball.xDir *= -1;
-			}
-			else if (ball.x + ball.width > player2.x &&
-				ball.y == player2.y + (player2.height / 2)) {
-				ball.yDir *= -1;
-				ball.xDir *= -1;
-			}
-		}
-		app.reset = function () { };
-		app.pause = function () { };
-		app.onUpdate = function (time) {
-			var ball = this.getNode('ball');
+		app.moveBall = function (ball) {
 			ball.y += Math.sin((Math.PI * (1 / 4)) * ball.speed) * ball.yDir;
 			ball.x += Math.cos((Math.PI * (1 / 4)) * ball.speed) * ball.xDir;
 			if (ball.y < 0 || ball.y + ball.height > app.height) {
@@ -124,7 +96,47 @@
 
 				ball.xDir *= -1;
 			}
-			this.collisionCheck(ball)
+		}
+		app.collisionCheck = function (ball) {
+			var player1 = this.getNode('player-one');
+			var player2 = this.getNode('player-two');
+			//Player 1 collision
+			if (ball.x < player1.x + player1.width) {
+				if (ball.y > player1.y && ball.y <= player1.y + (.5 * player1.height)) {
+					ball.yDir = 1;
+					ball.xDir *= -1;
+					//console.log('p1 top', player1, ball);
+				}
+				else if (ball.y > player1.y + (.5 * player1.height) && ball.y <= player1.y + player1.height) {
+					ball.yDir = -1;
+					ball.xDir *= -1;
+					//console.log('p1 bottom', player1, ball);
+				}
+			}
+
+			//Player 2 collision
+			if (ball.x + ball.width > player2.x) {
+
+
+				if (ball.y > player2.y && ball.y <= player2.y + (.5 * player2.height)) {
+					ball.yDir = 1;
+					ball.xDir *= -1;
+					//console.log('2 top', player2, ball);
+				}
+				else if (ball.y > player1.y + (.5 * player2.height) && ball.y <= player2.y + player2.height) {
+					ball.yDir = -1;
+					ball.xDir *= -1;
+					//console.log('2 bottom', player2, ball);
+				}
+			}
+		}
+		app.reset = function () { };
+		app.pause = function () { };
+		app.onUpdate = function (time) {
+			var ball = this.getNode('ball');
+
+			this.moveBall(ball);
+			this.collisionCheck(ball);
 
 		};
 	</script>
