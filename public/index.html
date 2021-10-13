@@ -89,21 +89,21 @@
 			var player2 = this.getNode('player-two');
 			//Player 1 collision
 			if (ball.x < player1.x + player1.width &&
-				ball.y <= player1.y + (player1.height / 2)) {
+				ball.y < player1.y + (player1.height / 2)) {
 				ball.yDir *= -1;
 				ball.xDir *= -1;
 			}
 			else if (ball.x < player1.x + player1.width &&
-				ball.y > player1.y + (player1.height / 2)) {
+				ball.y == player1.y + (player1.height / 2)) {
 				ball.xDir *= -1;
 			}
 			//Player 2 collision
-			else if (ball.x + ball.width > player2.x &&
-				ball.y <= player2.y + (player2.height / 2)) {
+			if (ball.x + ball.width > player2.x &&
+				ball.y < player2.y + (player2.height / 2)) {
 				ball.xDir *= -1;
 			}
 			else if (ball.x + ball.width > player2.x &&
-				ball.y > player2.y + (player2.height / 2)) {
+				ball.y == player2.y + (player2.height / 2)) {
 				ball.yDir *= -1;
 				ball.xDir *= -1;
 			}
@@ -115,10 +115,13 @@
 			ball.y += Math.sin((Math.PI * (1 / 4)) * ball.speed) * ball.yDir;
 			ball.x += Math.cos((Math.PI * (1 / 4)) * ball.speed) * ball.xDir;
 			if (ball.y < 0 || ball.y + ball.height > app.height) {
+				//console.log('Wall hit', this.getNode('ball').x, this.getNode('ball').y);
 				ball.yDir *= -1;
 			}
 
 			if (ball.x < 0 || ball.x + ball.width > app.width) {
+				//console.log('Wall hit', this.getNode('ball').x, this.getNode('ball').y);
+
 				ball.xDir *= -1;
 			}
 			this.collisionCheck(ball)
