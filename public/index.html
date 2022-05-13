@@ -1,46 +1,189 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Ping Pong Game</title>
 </head>
+
 <body>
 	<canvas id="canvas" width="800" height="400"></canvas>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 		//Sample functions, remove these functions and design ping-pong game with onInit and onUpdate.
 
-		app.onInit = function(){
+		app.onInit = function () {
+			this.canvas.width = window.outerWidth;
+			this.width = window.innerWidth;
+			this.canvas.height = window.outerHeight;
+			this.height = window.innerHeight;
+			var paddleWidth = app.width / 40
+			var paddleHeight = app.height / 4
 			this.nodes.push({
-				id : 'red-box',
-				x  : 100,
-				y  : 0,
-				width  : 100,
-				height : 100,
-				color  : 'red',
-				direction : 0
+				id: 'player-one',
+				x: 0,
+				y: (app.height - paddleHeight) / 2,
+				width: paddleWidth,
+				height: paddleHeight,
+				speed: 3,
+				color: 'black',
+				score: 0
+
 			});
 
 			this.nodes.push({
-				id : 'black-box',
-				x  : 50,
-				y  : 0,
-				width  : 150,
-				height : 150,
-				color  : 'black'
+				id: 'player-two',
+				x: app.width - paddleWidth,
+				y: (app.height - paddleHeight) / 2,
+				width: paddleWidth,
+				height: paddleHeight,
+				speed: 3,
+				color: 'black',
+				score: 0
 			});
+			this.nodes.push({
+				id: 'ball',
+				x: app.width / 2,
+				y: app.height / 2,
+				radius: paddleWidth/2,
+				width: paddleWidth,
+				height: paddleWidth,
+				speed: 5,
+				xDir: 1,
+				yDir: 1,
+				color: 'red',
+
+
+			});
+			/**
+			 * @param{KeyboardEvent} event
+			 **/
+			window.onkeydown = function (event) {
+				var player1 = app.getNode('player-one');
+				var player2 = app.getNode('player-two');
+				switch (event.code) {
+					case 'KeyW':
+						if (!app.isPaused) {
+							player1.y -= player1.speed;
+							if (player1.y < 0) { player1.y = 0 };
+						}
+						break;
+					case 'KeyS':
+						if (!app.isPaused) {
+							player1.y += player1.speed;
+							if (player1.y + paddleHeight > app.height) { player1.y = app.height - paddleHeight };
+						}
+						break;
+					case 'ArrowUp':
+						if (!app.isPaused) {
+							player2.y -= player2.speed;
+							if (player2.y < 0) { player2.y = 0 };
+						}
+						break;
+					case 'ArrowDown':
+						if (!app.isPaused) {
+							player2.y += player2.speed;
+							if (player2.y + paddleHeight > app.height) { player2.y = app.height - paddleHeight };
+						}
+						break;
+					case 'Space':
+						app.pause();
+						break;
+					default:
+						console.log(event);
+						break;
+				}
+			}
 		};
-
-		app.onUpdate = function(time){
-			this.getNode('black-box').y++;
-
-			if(Math.cos(this.timestamp / 100) > 0){
-				this.getNode('red-box').direction = -1;
-			}else{
-				this.getNode('red-box').direction = 1;
+		app.moveBall = function (ball) {
+			ball.y += Math.sin((Math.PI * (1 / 4)) * ball.speed) * ball.yDir;
+			ball.x += Math.cos((Math.PI * (1 / 4)) * ball.speed) * ball.xDir;
+			if (ball.y < 0 || ball.y + ball.height > app.height) {
+				//console.log('Wall hit', this.getNode('ball').x, this.getNode('ball').y);
+				ball.yDir *= -1;
 			}
 
-			this.getNode('red-box').x+=this.getNode('red-box').direction;
+			if (ball.x < 0) {
+				this.getNode('player-two').score++;
+				this.printScore();
+				this.resetBall();
+			} else if (ball.x + ball.width > app.width) {
+				this.getNode('player-one').score++;
+				this.printScore();
+				this.resetBall();
+			}
+		}
+		app.collisionCheck = function (ball) {
+			var player1 = this.getNode('player-one');
+			var player2 = this.getNode('player-two');
+			//Player 1 collision
+			if (ball.x < player1.x + player1.width) {
+				if (ball.y > player1.y && ball.y <= player1.y + (.5 * player1.height)) {
+					ball.yDir = 1;
+					ball.xDir *= -1;
+					//console.log('p1 top', player1, ball);
+				}
+				else if (ball.y > player1.y + (.5 * player1.height) && ball.y <= player1.y + player1.height) {
+					ball.yDir = -1;
+					ball.xDir *= -1;
+					//console.log('p1 bottom', player1, ball);
+				}
+			}
+
+			//Player 2 collision
+			if (ball.x + ball.width > player2.x) {
+
+
+				if (ball.y > player2.y && ball.y <= player2.y + (.5 * player2.height)) {
+					ball.yDir = 1;
+					ball.xDir *= -1;
+					//console.log('2 top', player2, ball);
+				}
+				else if (ball.y > player2.y + (.5 * player2.height) && ball.y <= player2.y + player2.height) {
+					ball.yDir = -1;
+					ball.xDir *= -1;
+					//console.log('2 bottom', player2, ball);
+				}
+			}
+		}
+		app.printScore = function () {
+			var player1 = this.getNode('player-one');
+			var player2 = this.getNode('player-two');
+
+			console.log(`SCORE: Player 1:${player1.score} - Player 2:${player2.score}`);
+		}
+		app.resetBall = function () {
+			this.getNode('ball').x = app.width / 2;
+			this.getNode('ball').y = app.height / 2;
+			this.getNode('ball').xDir *= -1;
+		};
+		app.reset = function () {
+			this.getNode('ball').x = app.width / 2;
+			this.getNode('ball').y = app.height / 2;
+			this.getNode('player-one').score = 0;
+			this.getNode('player-two').score = 0
+
+		};
+		app.isPaused = true;
+		app.pause = function () {
+			//console.log(app.isPaused);
+			if (this.isPaused) {
+				this.isPaused = false;
+			}
+			else {
+				this.isPaused = true;
+			}
+
+		};
+		app.onUpdate = function (time) {
+			var ball = this.getNode('ball');
+			if (!this.isPaused) {
+
+
+				this.moveBall(ball);
+				this.collisionCheck(ball);
+			}
 		};
 	</script>
 </body>
+
 </html>
